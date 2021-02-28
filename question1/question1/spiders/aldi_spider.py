@@ -19,41 +19,12 @@ class AldiSpider(scrapy.Spider):
 
     start_urls = ["https://www.aldi.com.au/"]
 
-    def start_requests(self):
-        for url in self.start_urls:
-            yield scrapy.Request(
-                url, callback=self.parse, errback=self.errback_aldi, dont_filter=True
-            )
-
     def parse(self, response):
-        self.logger.info("Got successful response from {}".format(response.url))
         # get all the submenu links of Groceries
         submenu_links = response.xpath(
             "//div[@id='footer-sitemap']/div[2]/div/div/ul/li/a/@href"
         ).getall()
         yield from response.follow_all(submenu_links, self.parse_submenu)
-
-    def errback_aldi(self, failure):
-        # log all failures
-        self.logger.error(repr(failure))
-
-        # in case you want to do something special for some errors,
-        # you may need the failure's type:
-
-        if failure.check(HttpError):
-            # these exceptions come from HttpError spider middleware
-            # you can get the non-200 response
-            response = failure.value.response
-            self.logger.error("HttpError on %s", response.url)
-
-        elif failure.check(DNSLookupError):
-            # this is the original request
-            request = failure.request
-            self.logger.error("DNSLookupError on %s", request.url)
-
-        elif failure.check(TimeoutError, TCPTimedOutError):
-            request = failure.request
-            self.logger.error("TimeoutError on %s", request.url)
 
     def parse_submenu(self, response):
         def extract_with_xpath(element, query):
