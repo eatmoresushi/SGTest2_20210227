@@ -24,7 +24,9 @@ class AldiSpider(scrapy.Spider):
         def extract_with_xpath(element, query):
             return element.xpath(query).get(default="").strip()
 
-        product_tiles = response.xpath("//div[@class='tx-aldi-products']/div/a")
+        product_tiles = response.xpath(
+            "//div[@class='tx-aldi-products']/div/a"
+        )
         if len(product_tiles) > 0:
             for product in product_tiles:
                 # special handing for product title
@@ -32,7 +34,9 @@ class AldiSpider(scrapy.Spider):
                     "./div/div/div[2]/div[self::*|self::sup]/text()"
                 ).getall()
                 yield {
-                    "Product_title": "".join(_ for _ in all_title_text).strip(),
+                    "Product_title": "".join(
+                        _ for _ in all_title_text
+                    ).strip(),
                     "Product_image": extract_with_xpath(
                         product, "./div/div/div[1]/img/@src"
                     ),
@@ -56,5 +60,9 @@ class AldiSpider(scrapy.Spider):
                 }
         else:
             # some categories require another click
-            sub_submenu_links = response.xpath("//div/div/div/div/div/a/@href").getall()
-            yield from response.follow_all(sub_submenu_links, self.parse_submenu)
+            sub_submenu_links = response.xpath(
+                "//div/div/div/div/div/a/@href"
+            ).getall()
+            yield from response.follow_all(
+                sub_submenu_links, self.parse_submenu
+            )
