@@ -1,8 +1,5 @@
 import scrapy
 
-from scrapy.spidermiddlewares.httperror import HttpError
-from twisted.internet.error import DNSLookupError
-from twisted.internet.error import TimeoutError, TCPTimedOutError
 
 """
 Scrapy tutorial
