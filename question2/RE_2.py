@@ -7,4 +7,6 @@ generic_urls = [
 ]
 
 for url in generic_urls:
-    special_sequence = re.search(r"/([a-zA-Z0-9]{11})-", url).group(1)
+    # use [^/] means does not contain '/'
+    # so we are looking for everything between '/' and '-' while not contain '/'
+    special_sequence = re.search(r"/([^/]*)-", url).group(1)
